@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FIAshion: correr la API y la pagina",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"],
+      "jinja": true,
+      "justMyCode": true,
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "FIAshion: cargar datos de ejemplo (seed)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/seed.py",
+      "console": "integratedTerminal"
+    }
+  ]
+}

@@ -1,98 +1,141 @@
-# FIAshion API - Sistema de Recomendaciones de Moda con Inteligencia Artificial
+# FIAshion - Asesoría de moda con IA y Realidad Aumentada
 
-API REST desarrollada con FastAPI para la gestión de un catálogo de prendas de vestir y la generación de recomendaciones personalizadas mediante Modelos de Lenguaje Grande (LLMs), integrando Google Gemini, persistencia de datos, validación de información, manejo de errores y pruebas de integración.
+FIAshion automatiza la asesoría y la atención al cliente en pymes de venta de ropa. El cliente filtra lo que busca (prenda, género/edad, talla, categoría y estilo), la Inteligencia Artificial le recomienda prendas, se las prueba con Realidad Aumentada y, si le gustan, las reserva. El sistema le asigna un probador y le avisa al empleado qué prenda llevar y a qué probador.
 
-## Tecnologías Utilizadas
+El proyecto es una API REST en FastAPI con una página web sencilla (HTML, CSS y JavaScript con `fetch`) que la misma API sirve.
 
-* **Lenguaje:** Python 3.12
-* **Backend:** FastAPI
-* **Base de Datos:** SQLite
-* **ORM:** SQLAlchemy
-* **Validación de Datos:** Pydantic
-* **Inteligencia Artificial:** Google Gemini API
-* **Comunicación HTTP:** HTTPX
-* **Pruebas:** Pytest y FastAPI TestClient
-* **Documentación:** OpenAPI 3.0 / Swagger UI
-* **Control de Versiones:** Git y GitHub
-* **Integración Continua:** GitHub Actions (CI/CD)
+## Tecnologías (todas gratuitas)
 
-## Objetivo del Proyecto
+| Capa | Tecnología |
+|---|---|
+| Lenguaje | Python 3.12 |
+| Backend / API | FastAPI + Uvicorn |
+| Base de datos | MySQL 8 con SQLAlchemy (ORM) y PyMySQL (SQLite para las pruebas) |
+| Validación | Pydantic |
+| Inteligencia Artificial | Google Gemini (API gratis de AI Studio) con Zero-Shot, Few-Shot y Chain-of-Thought + RAG básico |
+| Realidad Aumentada 3D | `<model-viewer>` de Google (3D en el navegador y RA en el celular) |
+| Probador con cámara | MediaPipe Pose Landmarker de Google (corre en el navegador) |
+| Imágenes | Pillow |
+| Ropa real | rembg (quitar el fondo de las fotos) y KIRI Engine (escanear en 3D con el celular) |
+| Frontend | HTML, CSS y JavaScript (`fetch`) |
+| Pruebas | Pytest + TestClient |
+| CI | GitHub Actions |
 
-Desarrollar una API REST que permita administrar productos de una tienda de ropa y generar recomendaciones personalizadas mediante inteligencia artificial, utilizando diferentes técnicas de prompting para seleccionar prendas según las preferencias del cliente.
+## Cómo abrirlo en Visual Studio Code
 
-## Funcionalidades Principales
+1. Abrir la carpeta del proyecto en VS Code (`Archivo > Abrir carpeta`). VS Code sugiere instalar la extensión de Python.
+2. Copiar `.env.example` como `.env` y llenar:
+   - `GEMINI_API_KEY`: la clave gratis de Gemini (https://aistudio.google.com/apikey). Sin clave todo funciona menos la recomendación con IA.
+   - `DATABASE_URL`: la conexión a MySQL. Cambiar `tu_clave` por la clave del usuario `root` (la misma con la que entran a MySQL Workbench):
+     `DATABASE_URL=mysql+pymysql://root:tu_clave@localhost:3306/fiashion`
+   - El servicio de MySQL tiene que estar prendido (en Workbench se ve como *Local instance MySQL80*). La base `fiashion` y sus tablas se crean solas la primera vez.
+   - Si no tienen MySQL, pueden usar SQLite poniendo `DATABASE_URL=sqlite:///./fiashion.db`.
+3. En Windows, doble clic a `iniciar.bat`: crea el entorno, instala, carga datos de ejemplo y abre la página.
 
-* **Gestión de Productos (CRUD):** creación, consulta, actualización y eliminación de prendas.
-* **Recomendaciones con IA:** selección de prendas según talla, género, categoría y estilo.
-* **Técnicas de Prompting:** implementación de Zero-Shot, Few-Shot y Chain-of-Thought (CoT).
-* **Recuperación de Información (RAG básico):** consulta de productos disponibles en la base de datos e incorporación de sus características al prompt enviado al modelo.
-* **Validación de Datos:** aplicación de esquemas Pydantic para validar las solicitudes.
-* **Manejo de Errores:** respuestas estructuradas para errores HTTP, datos inválidos y fallas del proveedor de IA.
-* **Registro de Métricas:** almacenamiento de prompts, respuestas, tokens utilizados y latencia en un archivo CSV.
-* **Pruebas Automatizadas:** verificación de endpoints, validaciones y manejo de errores.
-* **Integración Continua:** ejecución automática de pruebas mediante GitHub Actions.
+También se puede hacer a mano desde la terminal de VS Code:
 
-## Técnicas de Prompting
+```
+python -m venv .venv
+.venv\Scripts\activate          (en Mac/Linux: source .venv/bin/activate)
+pip install -r requirements.txt
+python seed.py
+uvicorn app.main:app --reload
+```
 
-* **Zero-Shot:** genera recomendaciones mediante instrucciones directas, sin ejemplos previos.
-* **Few-Shot:** utiliza ejemplos dentro del prompt para orientar el formato y el contenido de las respuestas.
-* **Chain-of-Thought (CoT):** solicita al modelo evaluar los criterios de selección antes de presentar las recomendaciones finales.
+O desde la pestaña **Ejecutar y depurar** de VS Code con la configuración *FIAshion: correr la API y la página*.
 
-## Funcionamiento del Sistema
+Luego abrir:
 
-El sistema de recomendaciones se desarrolla en tres etapas:
+- http://127.0.0.1:8000/app/ → página del **cliente**
+- http://127.0.0.1:8000/app/empleado.html → panel del **empleado**
+- http://127.0.0.1:8000/app/admin.html → panel del **administrador**
+- http://127.0.0.1:8000/docs → documentación de la API (Swagger, OpenAPI 3)
 
-1. **Retrieval:** consulta la base de datos y recupera hasta 20 productos disponibles que coincidan con los filtros del cliente.
-2. **Augmentation:** incorpora la información de las prendas recuperadas al prompt junto con las preferencias del cliente.
-3. **Generation:** envía el prompt a Google Gemini y devuelve las recomendaciones generadas junto con las métricas disponibles.
+> Si ya tenían una base de la versión anterior (`fiashion.db` o la base `fiashion` en MySQL), bórrenla antes de `python seed.py` porque la tabla de productos tiene columnas nuevas (`color`, `stock`, `imagen` y `modelo_3d`). En Workbench: `DROP DATABASE fiashion;`
 
-Si no existen productos que coincidan con los filtros, el sistema devuelve una respuesta informativa sin realizar una llamada al modelo de inteligencia artificial.
+## Usar la ropa real de la tienda
 
-## Endpoints de la API
+Al principio cada prenda se ve con un dibujo que arma el sistema según su categoría y color. Para mostrar la ropa de verdad:
 
-### Gestión de Productos
+1. **Foto:** tomar la foto de la prenda colgada o extendida, de frente, sobre un fondo liso y con buena luz.
+2. **Quitar el fondo** (para que en el probador solo se vea la prenda):
+   ```
+   pip install "rembg[cpu]"
+   python quitar_fondo.py carpeta_con_las_fotos
+   ```
+   Quedan en `fotos_sin_fondo/` como PNG. La primera vez descarga el modelo u2net (unos 170 MB). También sirve cualquier página gratis para quitar fondos.
+3. **Escaneo 3D (opcional):** con la app gratis **KIRI Engine** en el celular se le toman fotos alrededor a la prenda (por ejemplo puesta en un maniquí) y se exporta en formato `.glb`.
+4. En el **panel del administrador** se pulsa *Editar* en la prenda y en "Ropa real de esta prenda" se sube la foto y/o el `.glb`. Desde ese momento el catálogo, el 3D y el probador usan esos archivos. Con *Quitar foto* o *Quitar modelo* vuelve al dibujo.
 
-| Método HTTP | Endpoint | Descripción |
+Los archivos quedan en `app/static/subidas/` y en la base de datos solo se guarda el nombre. Fotos de hasta 8 MB (JPG, PNG o WEBP) y modelos de hasta 40 MB.
+
+## Cómo funciona
+
+1. **Filtros:** el cliente elige talla, género, categoría y estilo.
+2. **IA (RAG + prompting):** la API busca en la base de datos las prendas que cumplen los filtros y que tienen unidades libres, las pone en el prompt y le pide a Gemini hasta 3 recomendaciones. De la respuesta se leen los `id` para resaltar esas prendas en la página. Cada llamada queda en `llm_calls.csv` (tokens y latencia) y en la tabla `recomendaciones`.
+3. **Realidad Aumentada:**
+   - *Ver en 3D / RA:* la API arma un modelo `.glb` de la prenda (con su forma y color) y `<model-viewer>` lo muestra. En un celular el botón de RA la pone en el espacio con la cámara.
+   - *Probarme:* con la cámara o con una foto, MediaPipe encuentra los hombros y la cadera y se dibuja la prenda encima. La imagen se procesa en el navegador: no se envía al servidor ni se guarda (Ley 1581 de 2012). Si MediaPipe no carga (sin internet) hay un modo manual para acomodar la prenda.
+4. **Reserva:** se revisa que la prenda tenga unidades libres, se busca un probador disponible y, en **una sola transacción**, se guarda la reserva, el probador pasa a "ocupado" y se crea la notificación. Las reservas se procesan **una por una** (candado), así dos clientes no se quedan con la última unidad. Si ya no hay unidades, responde 409 con prendas parecidas.
+5. **Empleado:** ve las notificaciones (se actualizan cada 3 s y suenan), marca la prenda como entregada y cierra la reserva. Si el cliente compró, se descuenta del inventario.
+6. **Administrador:** CRUD de prendas, movimientos de inventario y probadores.
+
+## Endpoints
+
+| Método | Ruta | Descripción |
 |---|---|---|
-| POST | `/api/v1/productos` | Crear un producto |
-| GET | `/api/v1/productos` | Consultar todos los productos |
-| GET | `/api/v1/productos/{producto_id}` | Consultar un producto por ID |
-| PUT | `/api/v1/productos/{producto_id}` | Actualizar un producto |
-| DELETE | `/api/v1/productos/{producto_id}` | Eliminar un producto |
+| POST | `/api/v1/productos` | Crear prenda |
+| GET | `/api/v1/productos` | Listar prendas (filtros: talla, genero, categoria, estilo, solo_disponibles) |
+| GET | `/api/v1/productos/{id}` | Consultar prenda |
+| PUT | `/api/v1/productos/{id}` | Actualizar prenda |
+| DELETE | `/api/v1/productos/{id}` | Eliminar prenda |
+| POST | `/api/v1/ai/recommend` | Recomendaciones con Gemini (zero_shot, few_shot, cot) |
+| GET | `/api/v1/ra/{id}/modelo.glb` | Modelo 3D para `<model-viewer>` |
+| GET | `/api/v1/ra/{id}/prenda.png` | Imagen de la prenda (fondo transparente) |
+| GET | `/api/v1/ra/{id}/info` | Forma y zona del cuerpo para el probador |
+| POST/DELETE | `/api/v1/ra/{id}/imagen` | Subir o quitar la foto real de la prenda |
+| POST/DELETE | `/api/v1/ra/{id}/modelo` | Subir o quitar el escaneo 3D (.glb) |
+| POST | `/api/v1/reservas` | Reservar prenda y asignar probador |
+| GET | `/api/v1/reservas` | Listar reservas (filtro por cliente o estado) |
+| PATCH | `/api/v1/reservas/{id}/entregar` | El empleado llevó la prenda |
+| PATCH | `/api/v1/reservas/{id}/finalizar?compro=true` | Cerrar reserva (con o sin venta) |
+| PATCH | `/api/v1/reservas/{id}/cancelar` | El cliente cancela |
+| GET | `/api/v1/notificaciones` | Avisos para el empleado |
+| GET/POST/DELETE | `/api/v1/probadores` | Probadores |
+| GET/POST | `/api/v1/inventario/movimientos` | Entradas, salidas y ajustes de stock |
 
-### Inteligencia Artificial
+En `peticiones.http` hay ejemplos que se pueden ejecutar con la extensión REST Client de VS Code.
 
-| Método HTTP | Endpoint | Descripción |
-|---|---|---|
-| POST | `/api/v1/ai/recommend` | Generar recomendaciones personalizadas de prendas |
+## Estructura
 
-## Pruebas Automatizadas
+```
+app/
+  main.py            crea la app, registra las rutas y sirve la página web
+  database.py        conexión a MySQL (o SQLite); crea la base si no existe
+  models.py          tablas: productos, probadores, reservas, notificaciones,
+                     movimientos_inventario, recomendaciones
+  schemas.py         validaciones con Pydantic
+  errors.py          respuestas de error {status, message, timestamp, details}
+  disponibilidad.py  unidades libres = stock - reservas abiertas
+  llm.py / prompts.py  Gemini y las 3 técnicas de prompting
+  ra.py              imagen PNG y modelo 3D .glb de cada prenda (dibujados)
+  routers/           productos, ai, reservas, inventario, ra
+  static/            página web: index.html (cliente), empleado.html, admin.html
+tests/               44 pruebas (no gastan cuota de Gemini)
+seed.py              datos de ejemplo
+quitar_fondo.py      quita el fondo a las fotos de la ropa real
+```
 
-El proyecto utiliza Pytest para verificar la creación y consulta de productos, la validación de datos, el manejo de errores y el funcionamiento del sistema de recomendaciones.
+## Pruebas
 
-Las pruebas utilizan una base de datos SQLite en memoria y respuestas simuladas del proveedor de IA cuando corresponde, evitando consumir cuota de Gemini durante su ejecución.
+```
+pytest -v
+```
 
-## Registro de Métricas
+Usan una base de datos SQLite en memoria (no tocan MySQL) y un Gemini "falso", así que no necesitan clave ni gastan cuota. Hay pruebas unitarias, de integración, funcionales, de validación y de aceptación. Cubren el CRUD, la IA (incluyendo timeout, límite de peticiones y falta de clave), las reservas (transacción, dos clientes al mismo tiempo, probadores llenos, ventas), el inventario, la RA, la subida de fotos y escaneos reales y las páginas.
 
-Las llamadas exitosas a Google Gemini se registran en un archivo CSV que contiene:
+## Seguridad y datos personales
 
-* Técnica de prompting utilizada.
-* Prompt enviado al modelo.
-* Respuesta generada.
-* Tokens de entrada y salida.
-* Latencia de la solicitud en milisegundos.
-
-Estas métricas permiten analizar el comportamiento del sistema y comparar las técnicas de prompting implementadas.
-
-## Seguridad y Manejo de Errores
-
-* Uso de variables de entorno para proteger las credenciales de la API.
-* Validación de datos mediante Pydantic.
-* Manejo controlado de errores HTTP.
-* Respuestas específicas para productos inexistentes, datos inválidos, límites de solicitudes, fallas del proveedor de IA y tiempos de espera agotados.
-* Exclusión de credenciales y archivos temporales del repositorio mediante `.gitignore`.
-
-## Integración Continua (CI/CD)
-
-El proyecto utiliza GitHub Actions para ejecutar automáticamente las pruebas cuando se realizan eventos `push` o `pull_request`, configurando Python 3.12, instalando las dependencias y verificando el funcionamiento de la API mediante Pytest.
-
+- La clave de Gemini va en `.env` (no se sube a GitHub).
+- Las fotos y el video de la cámara se procesan solo en el navegador del cliente.
+- Las respuestas de error no muestran detalles internos del servidor.

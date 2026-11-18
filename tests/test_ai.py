@@ -32,6 +32,23 @@ def test_recomendacion_ok(client, monkeypatch):
     r = client.post("/api/v1/ai/recommend", json={**FILTROS, "technique": "few_shot"})
     assert r.status_code == 200
     assert r.json()["input_tokens"] == 100
+    assert r.json()["product_ids"] == [1]   # se leyo el "id 1" de la respuesta
+
+
+def test_ids_inventados_por_la_ia_se_ignoran(client, monkeypatch):
+    _crear(client)
+    monkeypatch.setenv("GEMINI_API_KEY", "x")
+    monkeypatch.setenv("GEMINI_MODEL", "modelo-falso")
+    monkeypatch.setattr("app.llm.httpx.post", lambda *a, **k: httpx.Response(200, json={
+        "candidates": [{"content": {"parts": [{"text": "id 1 y tambien id 77"}]}}]}))
+    r = client.post("/api/v1/ai/recommend", json=FILTROS)
+    assert r.json()["product_ids"] == [1]
+
+
+def test_sin_clave_da_503(client, monkeypatch):
+    _crear(client)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    assert client.post("/api/v1/ai/recommend", json=FILTROS).status_code == 503
 
 
 def test_timeout_da_504(client, monkeypatch):

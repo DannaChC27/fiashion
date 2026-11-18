@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FIAshion - Cliente</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/estilos.css">
+  <!-- <model-viewer> de Google: muestra la prenda en 3D y en RA desde el celular -->
+  <script type="module" src="vendor/model-viewer.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="logo">FIAshion</div>
+    <nav>
+      <a href="index.html" class="activo">Cliente</a>
+      <a href="empleado.html">Empleado</a>
+      <a href="admin.html">Administrador</a>
+      <a href="/docs" target="_blank">API (Swagger)</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Encuentra tu prenda</h1>
+    <p class="suave">Escoge lo que buscas, deja que la IA te recomiende, pruébatela con la cámara y resérvala con un probador asignado.</p>
+
+    <section class="panel">
+      <div class="fila">
+        <label class="campo">Tu nombre (para la reserva)
+          <input id="nombre" placeholder="Ej. Laura Gómez" maxlength="80">
+        </label>
+        <label class="campo">Talla
+          <select id="talla"><option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option></select>
+        </label>
+        <label class="campo">Género / edad
+          <select id="genero"><option value="mujer">Mujer</option><option value="hombre">Hombre</option><option value="unisex">Unisex</option></select>
+        </label>
+        <label class="campo">Categoría
+          <select id="categoria"></select>
+        </label>
+        <label class="campo">Estilo
+          <select id="estilo"><option value="">Cualquiera</option><option>casual</option><option>urbano</option><option>formal</option><option>deportivo</option></select>
+        </label>
+        <label class="campo">Técnica de IA
+          <select id="tecnica"><option value="few_shot">Few-shot</option><option value="zero_shot">Zero-shot</option><option value="cot">Chain-of-Thought</option></select>
+        </label>
+        <button class="principal" id="btn-ia">Recomendarme con IA</button>
+        <button id="btn-catalogo">Ver catálogo</button>
+      </div>
+    </section>
+
+    <section id="zona-ia" class="panel" hidden>
+      <h2 style="margin-top:0">Recomendación de la IA <span id="ia-meta" class="suave"></span></h2>
+      <div id="ia-texto" class="respuesta-ia"></div>
+    </section>
+
+    <h2 id="titulo-lista">Catálogo</h2>
+    <div id="lista" class="grilla"></div>
+
+    <h2>Mis reservas</h2>
+    <div class="panel">
+      <p class="suave">Se actualiza sola. «Pendiente»: el empleado va con la prenda. «Activa»: la prenda ya está en tu probador.</p>
+      <table>
+        <thead><tr><th>Prenda</th><th>Talla</th><th>Probador</th><th>Estado</th><th>Hora</th><th></th></tr></thead>
+        <tbody id="mis-reservas"><tr><td colspan="6" class="suave">Escribe tu nombre para ver tus reservas.</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Ventana del modelo 3D -->
+  <div class="modal" id="modal-3d">
+    <div class="caja">
+      <button class="cerrar" onclick="cerrarModal('modal-3d')">Cerrar</button>
+      <h2 id="titulo-3d" style="margin-top:0"></h2>
+      <p class="suave">Gira la prenda con el mouse. Desde el celular, el botón de RA la pone en tu espacio con la cámara.</p>
+      <model-viewer id="visor" camera-controls auto-rotate ar ar-modes="webxr scene-viewer quick-look"
+                    shadow-intensity="1" exposure="1" alt="Modelo 3D de la prenda"></model-viewer>
+    </div>
+  </div>
+
+  <!-- Ventana del probador virtual -->
+  <div class="modal" id="modal-probador">
+    <div class="caja">
+      <button class="cerrar" onclick="detenerProbador(); cerrarModal('modal-probador')">Cerrar</button>
+      <h2 id="titulo-probador" style="margin-top:0">Probador virtual</h2>
+      <label style="display:block;margin:6px 0">
+        <input type="checkbox" id="consentimiento" style="min-width:auto">
+        Autorizo usar mi cámara o mi foto solo para este probador. La imagen se procesa en este equipo,
+        no se envía al servidor ni se guarda (Ley 1581 de 2012).
+      </label>
+      <div class="tabs">
+        <button id="tab-camara" class="activo">Cámara en vivo</button>
+        <button id="tab-foto">Subir una foto</button>
+        <input type="file" id="archivo-foto" accept="image/*" hidden>
+      </div>
+      <div class="probador">
+        <video id="video" playsinline muted></video>
+        <canvas id="lienzo" width="640" height="480"></canvas>
+      </div>
+      <div class="fila" style="margin-top:10px">
+        <span id="estado-probador" class="suave">Marca la autorización y escoge cámara o foto.</span>
+      </div>
+      <div class="fila" id="ajuste-manual" style="margin-top:8px" hidden>
+        <label class="campo">Tamaño <input type="range" id="escala" min="40" max="160" value="100"></label>
+        <span class="suave" id="ayuda-ajuste">Ajusta el tamaño si la prenda se ve muy grande o muy pequeña.</span>
+      </div>
+      <div class="fila" style="margin-top:10px">
+        <button class="principal" id="btn-reservar-probador">Me gustó, reservar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="mensaje"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/probador.js"></script>
+  <script src="js/cliente.js"></script>
+</body>
+</html>

@@ -17,7 +17,8 @@ def _filtros(talla, genero, categoria, estilo) -> str:
 def zero_shot(productos, talla, genero, categoria, estilo) -> str:
     return (
         "Eres el asesor de una tienda de ropa. Recomienda hasta 3 prendas "
-        "de la lista que mejor encajen con el cliente. Usa SOLO prendas de la lista.\n\n"
+        "de la lista que mejor encajen con el cliente. Usa SOLO prendas de la lista "
+        "y nombra cada una con su id (ejemplo: id 3).\n\n"
         f"Cliente: {_filtros(talla, genero, categoria, estilo)}\n\n"
         f"Prendas disponibles:\n{_catalogo(productos)}")
 
@@ -43,7 +44,8 @@ def cot(productos, talla, genero, categoria, estilo) -> str:
     return (
         "Eres el asesor de una tienda de ropa. Piensa paso a paso. "
         "Primero revisa cada prenda y di si cumple talla, categoria y estilo. "
-        "Despues da la recomendacion final (hasta 3 prendas, solo de la lista).\n\n"
+        "Despues da la recomendacion final (hasta 3 prendas, solo de la lista), "
+        "nombrando cada una con su id (ejemplo: id 3).\n\n"
         f"Cliente: {_filtros(talla, genero, categoria, estilo)}\n\n"
         f"Prendas disponibles:\n{_catalogo(productos)}")
 

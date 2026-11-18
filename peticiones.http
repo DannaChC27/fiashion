@@ -1,0 +1,35 @@
+### Peticiones de ejemplo (se ejecutan con la extension REST Client de VS Code)
+@url = http://127.0.0.1:8000/api/v1
+
+### Catalogo con filtros
+GET {{url}}/productos?talla=M&genero=mujer&categoria=chaquetas&solo_disponibles=true
+
+### Recomendacion con IA (zero_shot, few_shot o cot)
+POST {{url}}/ai/recommend
+Content-Type: application/json
+
+{"talla": "M", "genero": "mujer", "categoria": "chaquetas", "estilo": "urbano", "technique": "few_shot"}
+
+### Reservar una prenda (asigna probador y avisa al empleado)
+POST {{url}}/reservas
+Content-Type: application/json
+
+{"id_producto": 1, "nombre_cliente": "Laura Gomez"}
+
+### Notificaciones del empleado
+GET {{url}}/notificaciones?pendientes=true
+
+### Probadores
+GET {{url}}/probadores
+
+### Empleado: prenda entregada
+PATCH {{url}}/reservas/1/entregar
+
+### Empleado: finalizar con venta
+PATCH {{url}}/reservas/1/finalizar?compro=true
+
+### Inventario: entrada de mercancia
+POST {{url}}/inventario/movimientos
+Content-Type: application/json
+
+{"id_producto": 1, "tipo": "entrada", "cantidad": 5, "motivo": "Llego pedido"}

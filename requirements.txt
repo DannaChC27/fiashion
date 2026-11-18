@@ -3,4 +3,8 @@ uvicorn
 sqlalchemy
 httpx
 python-dotenv
+pillow
+python-multipart
+pymysql
+cryptography
 pytest

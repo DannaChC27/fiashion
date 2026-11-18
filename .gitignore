@@ -3,3 +3,7 @@
 __pycache__/
 .pytest_cache/
 venv/
+.venv/
+app/static/generado/
+app/static/subidas/
+fotos_sin_fondo/

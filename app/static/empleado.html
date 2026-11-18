@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FIAshion - Empleado</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header>
+    <div class="logo">FIAshion</div>
+    <nav>
+      <a href="index.html">Cliente</a>
+      <a href="empleado.html" class="activo">Empleado</a>
+      <a href="admin.html">Administrador</a>
+      <a href="/docs" target="_blank">API (Swagger)</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Prendas por llevar <span id="contador" class="contador" hidden></span></h1>
+    <p class="suave">La lista se actualiza sola cada 3 segundos y suena un aviso cuando llega una reserva nueva.
+      Lleva la prenda, márcala como entregada y, cuando el cliente salga, finaliza la reserva.</p>
+    <label class="suave"><input type="checkbox" id="solo-pendientes" style="min-width:auto"> Ver solo las pendientes</label>
+    <div class="panel" style="margin-top:8px">
+      <table>
+        <thead><tr><th>Hora</th><th>Qué hacer</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="notificaciones"></tbody>
+      </table>
+    </div>
+
+    <h2>Probadores</h2>
+    <div class="panel">
+      <table>
+        <thead><tr><th>Probador</th><th>Estado</th><th>Cliente</th><th>Prendas</th></tr></thead>
+        <tbody id="probadores"></tbody>
+      </table>
+    </div>
+  </main>
+  <div id="mensaje"></div>
+  <script src="js/api.js"></script>
+  <script src="js/empleado.js"></script>
+</body>
+</html>

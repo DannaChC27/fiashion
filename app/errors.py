@@ -12,7 +12,20 @@ def _body(status: int, message: str, details=None):
     return body
 
 
+class ConflictoError(Exception):
+    """Regla de negocio que no se cumple (409). Puede traer prendas parecidas en details."""
+
+    def __init__(self, message: str, details=None):
+        super().__init__(message)
+        self.message = message
+        self.details = details
+
+
 def register_error_handlers(app: FastAPI):
+    @app.exception_handler(ConflictoError)
+    async def conflict_error(request: Request, exc: ConflictoError):
+        return JSONResponse(status_code=409, content=_body(409, exc.message, exc.details))
+
     @app.exception_handler(HTTPException)
     async def http_error(request: Request, exc: HTTPException):
         return JSONResponse(status_code=exc.status_code,

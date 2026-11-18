@@ -1,9 +1,12 @@
+import re
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Producto
+from app.disponibilidad import unidades_libres
+from app.models import Producto, Recomendacion
 from app.schemas import RecommendRequest, RecommendResponse, ErrorOut
 from app.prompts import TECNICAS
 from app.llm import llamar_gemini
@@ -30,7 +33,8 @@ def recomendar(datos: RecommendRequest, db: Session = Depends(get_db)):
     )
     if datos.estilo:
         consulta = consulta.where(Producto.estilo == datos.estilo)
-    productos = db.scalars(consulta.limit(20)).all()
+    # solo las que todavia tienen unidades sin reservar
+    productos = [p for p in db.scalars(consulta.limit(40)).all() if unidades_libres(db, p) > 0][:20]
 
     # Si no hay prendas, no gastamos una llamada al modelo.
     if not productos:
@@ -44,7 +48,22 @@ def recomendar(datos: RecommendRequest, db: Session = Depends(get_db)):
 
     # 3. GENERATION: llamamos al LLM
     res = llamar_gemini(prompt, datos.technique)
+
+    # Buscamos en la respuesta los "id X" para que la pagina muestre esas prendas
+    ids_validos = {p.id_producto for p in productos}
+    ids = []
+    for encontrado in re.findall(r"id\s*:?\s*(\d+)", res["texto"], flags=re.IGNORECASE):
+        if int(encontrado) in ids_validos and int(encontrado) not in ids:
+            ids.append(int(encontrado))
+
+    # Se guarda la recomendacion (tabla recomendaciones)
+    db.add(Recomendacion(filtros=f"talla {datos.talla}, genero {datos.genero}, categoria "
+                                 f"{datos.categoria}, estilo {datos.estilo or 'cualquiera'}",
+                         tecnica=datos.technique, respuesta=res["texto"],
+                         productos=",".join(str(i) for i in ids)))
+    db.commit()
+
     return RecommendResponse(technique=datos.technique, recommendation=res["texto"],
-                             products_considered=len(productos),
+                             products_considered=len(productos), product_ids=ids,
                              input_tokens=res["tok_in"], output_tokens=res["tok_out"],
                              latency_ms=res["ms"])

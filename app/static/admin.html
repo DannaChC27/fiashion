@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FIAshion - Administrador</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header>
+    <div class="logo">FIAshion</div>
+    <nav>
+      <a href="index.html">Cliente</a>
+      <a href="empleado.html">Empleado</a>
+      <a href="admin.html" class="activo">Administrador</a>
+      <a href="/docs" target="_blank">API (Swagger)</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Administración</h1>
+
+    <h2>Prenda</h2>
+    <div class="panel">
+      <input type="hidden" id="id-producto">
+      <div class="fila">
+        <label class="campo">Nombre *<input id="f-nombre" maxlength="100"></label>
+        <label class="campo">Precio (COP) *<input id="f-precio" type="number" min="1"></label>
+        <label class="campo">Talla
+          <select id="f-talla"><option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option></select></label>
+        <label class="campo">Género
+          <select id="f-genero"><option>mujer</option><option>hombre</option><option>unisex</option></select></label>
+        <label class="campo">Categoría
+          <select id="f-categoria"><option>camisetas</option><option>camisas</option><option>chaquetas</option><option>pantalones</option><option>faldas</option><option>vestidos</option></select></label>
+        <label class="campo">Estilo
+          <select id="f-estilo"><option>casual</option><option>urbano</option><option>formal</option><option>deportivo</option></select></label>
+        <label class="campo">Color
+          <select id="f-color"><option>blanco</option><option>negro</option><option>gris</option><option>azul</option><option>azul oscuro</option><option>denim</option><option>rojo</option><option>vinotinto</option><option>rosado</option><option>morado</option><option>verde</option><option>verde oliva</option><option>amarillo</option><option>naranja</option><option>beige</option><option>cafe</option></select></label>
+        <label class="campo">Stock<input id="f-stock" type="number" min="0" value="1"></label>
+        <label class="campo">Descripción<input id="f-descripcion" maxlength="300"></label>
+        <label class="campo">A la venta
+          <select id="f-disponible"><option value="true">Sí</option><option value="false">No</option></select></label>
+      </div>
+      <div class="panel" id="archivos-reales" style="margin-top:12px;background:#fbf8ff" hidden>
+        <strong>Ropa real de esta prenda</strong>
+        <p class="suave">Foto: JPG, PNG o WEBP (mejor PNG sin fondo; use <code>quitar_fondo.py</code>).
+          Escaneo 3D: archivo .glb, por ejemplo exportado desde KIRI Engine.</p>
+        <div class="fila">
+          <img id="vista-foto" alt="Vista de la prenda" style="width:90px;height:90px;object-fit:contain;background:#f6f3ef;border-radius:8px">
+          <label class="campo">Foto real<input type="file" id="archivo-imagen" accept="image/png,image/jpeg,image/webp"></label>
+          <button id="btn-subir-imagen">Subir foto</button>
+          <button class="peligro" id="btn-quitar-imagen">Quitar foto</button>
+          <label class="campo">Escaneo 3D (.glb)<input type="file" id="archivo-modelo" accept=".glb"></label>
+          <button id="btn-subir-modelo">Subir modelo</button>
+          <button class="peligro" id="btn-quitar-modelo">Quitar modelo</button>
+        </div>
+        <span id="estado-archivos" class="suave"></span>
+      </div>
+      <div class="fila" style="margin-top:12px">
+        <button class="principal" id="btn-guardar">Guardar</button>
+        <button id="btn-nueva">Nueva</button>
+        <span id="modo" class="suave">Creando una prenda nueva</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead><tr><th>Id</th><th>Prenda</th><th>Talla</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Libres</th><th>A la venta</th><th></th></tr></thead>
+        <tbody id="productos"></tbody>
+      </table>
+    </div>
+
+    <h2>Inventario</h2>
+    <div class="panel">
+      <div class="fila">
+        <label class="campo">Prenda<select id="m-producto"></select></label>
+        <label class="campo">Tipo
+          <select id="m-tipo"><option value="entrada">Entrada</option><option value="salida">Salida</option><option value="ajuste">Ajuste (contar)</option></select></label>
+        <label class="campo">Cantidad *<input id="m-cantidad" type="number" min="0"></label>
+        <label class="campo">Motivo<input id="m-motivo" maxlength="200"></label>
+        <button class="principal" id="btn-movimiento">Registrar</button>
+      </div>
+      <table style="margin-top:12px">
+        <thead><tr><th>Fecha</th><th>Prenda</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th></tr></thead>
+        <tbody id="movimientos"></tbody>
+      </table>
+    </div>
+
+    <h2>Probadores</h2>
+    <div class="panel">
+      <div class="fila">
+        <label class="campo">Nombre<input id="p-nombre" placeholder="Probador 5"></label>
+        <button class="principal" id="btn-probador">Agregar</button>
+      </div>
+      <table style="margin-top:12px">
+        <thead><tr><th>Probador</th><th>Estado</th><th>Cliente</th><th></th></tr></thead>
+        <tbody id="lista-probadores"></tbody>
+      </table>
+    </div>
+  </main>
+  <div id="mensaje"></div>
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
