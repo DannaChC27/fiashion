@@ -13,3 +13,99 @@ Prendas disponibles:
 3. **Chaqueta de cuero sintetico** (id 4) - $210,000
 
 Todas están disponibles en tu talla y tienen el estilo urbano ideal para ti. ¡Cualquiera de ellas será un gran complemento para tu guardarropa!",143,161,1711
+few_shot,"Eres el asesor de una tienda de ropa. Recomienda hasta 3 prendas de la lista. Usa SOLO prendas de la lista y responde SIEMPRE con este formato: 'id X - nombre - razon corta'.
+
+Ejemplo 1
+Cliente: talla S, genero mujer, categoria camisas, estilo casual
+Respuesta:
+id 4 - Camisa de lino - talla S y estilo casual
+
+Ejemplo 2
+Cliente: talla L, genero hombre, categoria pantalones, estilo formal
+Respuesta:
+id 9 - Pantalon sastre - talla L y estilo formal
+
+Ahora el cliente real
+Cliente: talla M, genero mujer, categoria chaquetas, estilo cualquiera
+Prendas disponibles:
+- id 1: Chaqueta de jean oversize | chaquetas | talla M | estilo urbano | $129,900
+- id 3: Chaqueta bomber negra | chaquetas | talla M | estilo urbano | $159,900
+- id 4: Chaqueta impermeable | chaquetas | talla M | estilo deportivo | $189,900
+Respuesta:","id 1 - Chaqueta de jean oversize - talla M y estilo cualquiera
+id 3 - Chaqueta bomber negra - talla M y estilo cualquiera
+id 4 - Chaqueta impermeable - talla M y estilo cualquiera",236,44,12656
+few_shot,"Eres el asesor de una tienda de ropa. Recomienda hasta 3 prendas de la lista. Usa SOLO prendas de la lista y responde SIEMPRE con este formato: 'id X - nombre - razon corta'.
+
+Ejemplo 1
+Cliente: talla S, genero mujer, categoria camisas, estilo casual
+Respuesta:
+id 4 - Camisa de lino - talla S y estilo casual
+
+Ejemplo 2
+Cliente: talla L, genero hombre, categoria pantalones, estilo formal
+Respuesta:
+id 9 - Pantalon sastre - talla L y estilo formal
+
+Ahora el cliente real
+Cliente: talla M, genero mujer, categoria faldas, estilo cualquiera
+Prendas disponibles:
+- id 18: Falda de jean | faldas | talla M | estilo casual | $72,000
+- id 19: Falda larga | faldas | talla M | estilo formal | $89,000
+Respuesta:","id 18 - Falda de jean - talla M y estilo casual
+id 19 - Falda larga - talla M y estilo formal",207,30,8205
+few_shot,"Eres el asesor de una tienda de ropa. Recomienda hasta 3 prendas de la lista. Usa SOLO prendas de la lista y responde SIEMPRE con este formato: 'id X - nombre - razon corta'.
+
+Ejemplo 1
+Cliente: talla S, genero mujer, categoria camisas, estilo casual
+Respuesta:
+id 4 - Camisa de lino - talla S y estilo casual
+
+Ejemplo 2
+Cliente: talla L, genero hombre, categoria pantalones, estilo formal
+Respuesta:
+id 9 - Pantalon sastre - talla L y estilo formal
+
+Ahora el cliente real
+Cliente: talla M, genero mujer, categoria chaquetas, estilo cualquiera
+Prendas disponibles:
+- id 1: Chaqueta de jean oversize | chaquetas | talla M | estilo urbano | $129,900
+- id 3: Chaqueta bomber negra | chaquetas | talla M | estilo urbano | $159,900
+- id 4: Chaqueta impermeable | chaquetas | talla M | estilo deportivo | $189,900
+- id 23: Chaqueta azul | chaquetas | talla M | estilo casual | $95,000
+Respuesta:","id 1 - Chaqueta de jean oversize - talla M y estilo urbano
+id 3 - Chaqueta bomber negra - talla M y estilo urbano
+id 4 - Chaqueta impermeable - talla M y estilo deportivo",263,44,3137
+few_shot,"Eres el asesor de una tienda de ropa. Recomienda hasta 3 prendas de la lista. Usa SOLO prendas de la lista y responde SIEMPRE con este formato: 'id X - nombre - razon corta'.
+
+Ejemplo 1
+Cliente: talla S, genero mujer, categoria camisas, estilo casual
+Respuesta:
+id 4 - Camisa de lino - talla S y estilo casual
+
+Ejemplo 2
+Cliente: talla L, genero hombre, categoria pantalones, estilo formal
+Respuesta:
+id 9 - Pantalon sastre - talla L y estilo formal
+
+Ahora el cliente real
+Cliente: talla L, genero hombre, categoria chaquetas, estilo cualquiera
+Prendas disponibles:
+- id 6: Blazer gris | chaquetas | talla L | estilo formal | $185,000
+Respuesta:",id 6 - Blazer gris - talla L y estilo formal,178,12,4027
+few_shot,"Eres el asesor de una tienda de ropa. Recomienda hasta 3 prendas de la lista. Usa SOLO prendas de la lista y responde SIEMPRE con este formato: 'id X - nombre - razon corta'.
+
+Ejemplo 1
+Cliente: talla S, genero mujer, categoria camisas, estilo casual
+Respuesta:
+id 4 - Camisa de lino - talla S y estilo casual
+
+Ejemplo 2
+Cliente: talla L, genero hombre, categoria pantalones, estilo formal
+Respuesta:
+id 9 - Pantalon sastre - talla L y estilo formal
+
+Ahora el cliente real
+Cliente: talla L, genero hombre, categoria chaquetas, estilo cualquiera
+Prendas disponibles:
+- id 6: Blazer gris | chaquetas | talla L | estilo formal | $185,000
+Respuesta:",id 6 - Blazer gris - talla L y estilo formal,178,12,5538
